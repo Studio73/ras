@@ -1,7 +1,7 @@
 #!/bin/bash
 
 apt-get update && apt-get upgrade -y
-apt-get install -y git python3-pip libjpeg-dev zlib1g-dev supervisor
+apt-get install -y git python3-pip libjpeg-dev zlib1g-dev supervisor libtiff5 libopenjp2-7
 git clone --depth=1 -b release https://github.com/Studio73/ras.git /home/pi/ras
 pip3 install -r /home/pi/ras/requirements.txt
 # FIX: module 'spi' has no attribute 'openspi'
