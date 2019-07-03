@@ -200,7 +200,7 @@ class Tasks:
     def show_version(self):
         origin = (34, 20)
         size = 24
-        text = "v1.2"
+        text = "v1.3"
         self.Disp.display_msg_raw(origin, size, text)
         time.sleep(1)
 
