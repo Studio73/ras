@@ -3,13 +3,13 @@
 WORK_DIR = "/home/pi/ras/"
 
 #network interface: wlan0 (WLAN), eth0 (Ethernet)
-NET_INTERFACE = 'wlan0'
+NET_INTERFACE = 'eth0'
 
 # SSID when resetting the WiFi
 SSID_reset = "__RAS__"
 
 # driver to be used by luma.core
-display_driver = "sh1106"
+display_driver = "ssd1306"
 
 # I/O PINS DEFINITION on the RPi Zero W
 # Using the BOARD numbering system
