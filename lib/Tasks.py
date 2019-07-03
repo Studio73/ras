@@ -26,8 +26,6 @@ class Tasks:
         # 'are you sure?' upon selection
         self.get_ip = routes.get_ip
         self.can_connect = Odoo.can_connect
-        self.wifi_active = self.Clock.interface_active
-        self.wifi_stable = self.Clock.wifi_stable
 
         # Menu vars
         self.begin_option = 0  # the Terminal begins with this option
@@ -100,7 +98,7 @@ class Tasks:
         self.back_to_begin_option()
 
     def update_firmware(self):
-        if self.wifi_stable():
+        if self.Clock.interface_stable:
             if self.can_connect("https://github.com"):
                 _logger.debug("Updating Firmware")
                 self.Disp.display_msg("update")
@@ -162,25 +160,27 @@ class Tasks:
 
     def reset_odoo(self):
         _logger.debug("Reset Odoo credentials")
-        if not self.wifi_active():  # is the Terminal
+        self.Clock.interface_running()
+        # is the Terminal
+        if self.Clock.net_interface == 'wlan0' and not self.Clock.wifi_active():
             self.reset_wifi()  # connected to a WiFi
-
-        if self.wifi_stable():
-            routes.start_server()
-            self.Odoo.uid = False
-            while not self.Odoo.uid:
-                if os.path.isfile(self.Odoo.datajson):
-                    os.system("sudo rm " + self.Odoo.datajson)
-                self.odoo_config()
-            routes.stop_server()
-            self.Disp.display_msg("odoo_success")
-            self.Buzz.Play("back_to_menu")
         else:
-            self.Disp.display_msg("no_wifi")
-            self.Buzz.Play("FALSE")
-        self.Buzz.Play("back_to_menu")
-        time.sleep(2)
-        self.back_to_begin_option()
+            if self.Clock.interface_stable:
+                routes.start_server()
+                self.Odoo.uid = False
+                while not self.Odoo.uid:
+                    if os.path.isfile(self.Odoo.datajson):
+                        os.system("sudo rm " + self.Odoo.datajson)
+                    self.odoo_config()
+                routes.stop_server()
+                self.Disp.display_msg("odoo_success")
+                self.Buzz.Play("back_to_menu")
+            else:
+                self.Disp.display_msg("no_wifi")
+                self.Buzz.Play("FALSE")
+            self.Buzz.Play("back_to_menu")
+            time.sleep(2)
+            self.back_to_begin_option()
 
     def toggle_sync(self):
         _logger.warn("Toggle Sync")

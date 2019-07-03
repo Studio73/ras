@@ -18,6 +18,7 @@ class Clocking:
 
         self.net_interface = NET_INTERFACE # wlan0 or eth0
         self.wifi = False
+        self.wifi_con = Wireless('wlan0')
         self.interface_stable = False
         self.interface_msg = 'Unknown'
 
@@ -99,16 +100,15 @@ class Clocking:
                 return '       NO Ethernet'
 
     def interface_running(self):
-        if self.net_interface == 'wlan0':
+        ifconfig_out = subprocess.check_output(
+            'ifconfig eth0', shell=True).decode('utf-8')
+        if 'RUNNING' in ifconfig_out:
+            self.net_interface = 'eth0'
+            # stable in the case of ethernet means 'running'
+            self.interface_stable = True
+        else:
+            self.net_interface = 'wlan0'
             self.interface_stable = self.wifi_stable()
-        elif self.net_interface == 'eth0':
-            ifconfig_out = subprocess.check_output(
-                'ifconfig eth0', shell=True).decode('utf-8')
-            if 'RUNNING' in ifconfig_out:
-                self.interface_stable = True  # stable in the case of ethernet
-                # means 'running'
-            else:
-                self.interface_stable = False
         return self.interface_stable
 
     def wifi_stable(self):
@@ -116,6 +116,7 @@ class Clocking:
         return self.wifi
 
     def odoo_msg(self):
+        msg = ''
         if self.interface_running():
             if self.Odoo._get_user_id():
                 msg = "           Odoo OK"
@@ -162,7 +163,7 @@ class Clocking:
 
         self.get_messages()
         self.minutes = 100 # ensure that the time is allways displayed on calling
-        
+
         while not (self.card == self.Odoo.adm):
 
             if self.checkodoo_wifi:  # odoo connected and wifi strength
