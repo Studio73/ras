@@ -5,6 +5,7 @@ raspi-config nonint do_configure_keyboard es
 raspi-config nonint do_ssh 0
 raspi-config nonint do_spi 0
 raspi-config nonint do_i2c 0
+passwd pi
 apt-get update && apt-get upgrade -y
 apt-get install -y git python3-pip libjpeg-dev zlib1g-dev supervisor libtiff5 libopenjp2-7
 git clone --depth=1 -b release https://github.com/Studio73/ras.git /home/pi/ras
